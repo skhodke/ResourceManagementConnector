@@ -2,6 +2,8 @@ package com.example.domain;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class UserPermission {
 	
@@ -16,9 +18,10 @@ public class UserPermission {
 	@Column(name = "access_status")
 	private Integer access_status;
 	
+	/*@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_email_id", insertable = false, updatable = false)
-	private User users;	
+	private User user;	*/
 	
 	public UserPermission() {
 		super();
@@ -45,13 +48,4 @@ public class UserPermission {
 		this.access_status = access_status;
 	}
 	
-
-	
-	public User getUsers() {
-		return users;
-	}
-
-	public void setUsers(User users) {
-		this.users = users;
-	}
 }

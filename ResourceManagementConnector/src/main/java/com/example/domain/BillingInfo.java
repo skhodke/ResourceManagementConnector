@@ -1,9 +1,8 @@
 package com.example.domain;
 
-import java.sql.Blob;
-import java.util.Date;
-
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class BillingInfo {
@@ -13,15 +12,15 @@ public class BillingInfo {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer billing_info_id;
 	
-	@Column(name = "billing_blob")
-	private Blob billing_blob;
+	@Column(name = "BILLING_RATE")
+	private String billingRate;
 	
-//	@Column(name = "creation_date")
-//	private Date creation_date;
+	@Column(name = "IS_BILLABLE")
+	private Boolean isBillable;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id", insertable = false, updatable = false)
-	private User users;
+	@ManyToOne(cascade= CascadeType.ALL)
+	@JoinColumn(name = "emp_id", referencedColumnName = "user_id",nullable=false)
+	private User user;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "project_id",insertable = false, updatable = false)
@@ -32,28 +31,13 @@ public class BillingInfo {
 		return billing_info_id;
 	}
 
-	public Blob getBilling_blob() {
-		return billing_blob;
-	}
-
-	public void setBilling_blob(Blob billing_blob) {
-		this.billing_blob = billing_blob;
-	}
-
-//	public Date getCreation_date() {
-//		return creation_date;
-//	}
-
-//	public void setCreation_date(Date creation_date) {
-//		this.creation_date = creation_date;
-//	}
-
+	@JsonIgnore
 	public User getUsers() {
-		return users;
+		return user;
 	}
 
-	public void setUsers(User users) {
-		this.users = users;
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	public Project getProjects() {
@@ -62,6 +46,22 @@ public class BillingInfo {
 
 	public void setProjects(Project projects) {
 		this.projects = projects;
+	}
+
+	public String getBillingRate() {
+		return billingRate;
+	}
+
+	public void setBillingRate(String billingRate) {
+		this.billingRate = billingRate;
+	}
+
+	public Boolean getIsBillable() {
+		return isBillable;
+	}
+
+	public void setIsBillable(Boolean isBillable) {
+		this.isBillable = isBillable;
 	}
 	
 

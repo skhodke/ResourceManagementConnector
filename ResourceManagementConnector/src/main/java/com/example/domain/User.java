@@ -5,12 +5,19 @@ import java.util.*;
 
 import javax.persistence.*;
 
+import org.springframework.data.domain.Persistable;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+
+
 @Entity 
-public class User {
+public class User implements Persistable<Integer> {
 
 	
-	@Id @GeneratedValue(strategy = GenerationType.AUTO) 
-	@Column(name = "user_id",nullable = false)
+	@Id 
+	@GeneratedValue(strategy = GenerationType.AUTO) 
+	@Column(name = "user_id")
 	private Integer user_id;
 	
 	@Column(name = "user_email_id",unique = true)
@@ -27,58 +34,65 @@ public class User {
 	
 	@Column(name="access_level")
 	private Integer accessLevel;
+		
+	@Column(name = "start_date")
+	private Date startDate;
 	
-//	@Column(name = "creation_date",nullable = false)
-//	private Date creationDate;
+	@Column(name = "company")
+	private String company;
 	
-//	@Column(name = "last_update",nullable = false)
-//	private Date lastUpdate;
-//	
-	@OneToMany(cascade = CascadeType.ALL,mappedBy = "users",fetch = FetchType.LAZY)
-	//private Set<UserPermission> userPermissions;
+	@Column(name = "user_expertise_level")
+	private String expertiseLevel;
+	
+	@Column(name = "user_skill_set")
+	private String skillSet;
+	
+	@Column(name = "user_location")
+	private String location;
+	
+	@JsonIgnore
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+	private List<BillingInfo> billinginfos;
+	
+	/*
+	@OneToMany(cascade = CascadeType.ALL,mappedBy = "user",fetch = FetchType.LAZY)
 	private List<UserPermission> userPermissions;
 	
 	@OneToMany(cascade = CascadeType.ALL,mappedBy = "users",fetch = FetchType.LAZY)
-	//private Set<Contract> contracts;
 	private List<Contract> contracts;
 	
-	@OneToMany(cascade = CascadeType.ALL,mappedBy = "users", fetch = FetchType.LAZY)
-	//private Set<Role> roles;
-	private List<Role> roles;
-	
+	@OneToMany(cascade = CascadeType.ALL,mappedBy = "user", fetch = FetchType.LAZY)
+	private List<Role> roles;*/
+	/*
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "users", fetch = FetchType.LAZY)
-	//private Set<BillingInfo> billinginfos;
-	private List<BillingInfo> billinginfos;
-	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "users", fetch = FetchType.LAZY)
-	//private Set<ResourceAllocation> resourceallocation;
-	private List<ResourceAllocation> resourceallocation;
+	private List<ResourceAllocation> resourceallocation;*/
 	
 	public User() {
 		super();
-		
 	}
 
-	public User(Integer id, String emailId, String password, String firstName, String lastName, Integer accessLevel,
-			Date creationDate, Date lastUpdate) {
+	public User(String emailId, String password, String firstName, String lastName, Integer accessLevel, Date startDate, String company, String expertiseLevel, String skillSet, String location) {
 		super();
-		user_id = id;
 		this.emailId = emailId;
 		this.password = password;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.accessLevel = accessLevel;
-		//this.creationDate = creationDate;
-		//this.lastUpdate = lastUpdate;
+		this.company = company;
+		this.startDate = startDate;
+		this.location = location;
+		this.expertiseLevel = expertiseLevel;
+		this.skillSet = skillSet;
+		
 	}
 
 	public Integer getId() {
 		return user_id;
 	}
 
-//	public void setId(Integer id) {
-//		Id = id;
-//	}
+	public void setId(Integer id) {
+		user_id = id;
+	}
 
 	public String getEmailId() {
 		return emailId;
@@ -120,22 +134,82 @@ public class User {
 		this.accessLevel = accessLevel;
 	}
 
-//	public Date getCreationDate() {
-//		return creationDate;
-//	}
+	public String getCompany() {
+		return company;
+	}
 
-//	public void setCreationDate(Date creationDate) {
-//		this.creationDate = creationDate;
-//	}
+	public void setCompnay(String company) {
+		this.company = company;
+	}
 
-//	public Date getLastUpdate() {
-//		return lastUpdate;
-//	}
-//
-//	public void setLastUpdate(Date lastUpdate) {
-//		this.lastUpdate = lastUpdate;
-//	}
+	public String getLocation() {
+		return location;
+	}
 
+	public void setLocation(String location) {
+		this.location = location;
+	}
+	
+	public String getExpertiseLevel() {
+		return expertiseLevel;
+	}
+
+	public void setExpertiseLevel(String expertiseLevel) {
+		this.expertiseLevel = expertiseLevel;
+	}
+	
+	public String getSkillSet() {
+		return skillSet;
+	}
+
+	public void setSkillSet(String skillSet) {
+		this.skillSet = skillSet;
+	}
+	
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+/*	
+	public List<Contract>  getContracts() {
+		return contracts;
+	}
+
+	public void setContracts(List<Contract> contracts) {
+		this.contracts =contracts;
+	}
+	
+	public List<UserPermission>  getUserPermissions() {
+		return userPermissions;
+	}
+
+	public void setUserPermissions(List<UserPermission> userPermissions) {
+		this.userPermissions = userPermissions;
+	}
+	
+	public List<Role> getRoles() {
+		return  roles;
+	}
+
+	public void setRoles(List<Role> roles) {
+		this.roles = roles;
+	}
+	*/
+	public List<BillingInfo> getBillingInfos() {
+		return  billinginfos;
+	}
+
+	public void setBillingInfos(BillingInfo billinginfo) {
+		if(billinginfos == null)
+			billinginfos = new ArrayList<BillingInfo>();
+		billinginfo.setUser(this);
+		billinginfos.add(billinginfo);
+	}
+		
+	
 	@Override
 	public String toString() {
 		return "User [Id=" + user_id + ", emailId=" + emailId + ", password=" + password + ", firstName=" + firstName
@@ -143,44 +217,10 @@ public class User {
 				+  "]";
 	}
 
-	public List<UserPermission> getUserPermissions() {
-		return userPermissions;
-	}
-
-	public void setUserPermissions(List<UserPermission> userPermissions) {
-		this.userPermissions = userPermissions;
-	}
-
-	public List<Contract> getContracts() {
-		return contracts;
-	}
-
-	public void setContracts(List<Contract> contracts) {
-		this.contracts = contracts;
-	}
-
-	public List<Role> getRoles() {
-		return roles;
-	}
-
-	public void setRoles(List<Role> roles) {
-		this.roles = roles;
-	}
-
-	public List<BillingInfo> getBillinginfos() {
-		return billinginfos;
-	}
-
-	public void setBillinginfos(List<BillingInfo> billinginfos) {
-		this.billinginfos = billinginfos;
-	}
-
-	public List<ResourceAllocation> getResourceallocation() {
-		return resourceallocation;
-	}
-
-	public void setResourceallocation(List<ResourceAllocation> resourceallocation) {
-		this.resourceallocation = resourceallocation;
+	@Override
+	public boolean isNew() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	
